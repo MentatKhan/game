@@ -42,7 +42,7 @@ const int DOOD_WIDTH = 16;
 SDL_Rect SQUARE = {0,0,TILE_SIZE,TILE_SIZE};
 
 //dood directional constants
-/*enum  DOOD_DIRECTIONAL_CONSTANTS
+enum  DOOD_DIRECTIONAL_CONSTANTS
 {
 DOOD_UP = 1,
 DOOD_RIGHT,
@@ -52,7 +52,7 @@ DOOD_ACTION,
 DOOD_CANCEL,
 DOOD_START,
 DOOD_SELECT
-};*/
+};
 
 //dood type constant
 enum DOODS
