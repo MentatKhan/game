@@ -1,22 +1,22 @@
 #include "globals.h"
 
-const char * MHERO_PATH = "Assets/mhero.bmp";
-const char * TEST_PALLET = "Assets/dirtset.bmp";
-//const char * PALLET_PATH = "Assets/pallet.txt";
-const char * NPC_PATH = "Assets/NPC.bmp";
-const char * PALLET = "Assets/Protopallettown.bmp";
-//const char * ROUTE1_PATH =  "Assets/route1.txt";
+const char * MHERO_PATH = "assets/mhero.bmp";
+const char * TEST_PALLET = "assets/dirtset.bmp";
+//const char * PALLET_PATH = "assets/pallet.txt";
+const char * NPC_PATH = "assets/NPC.bmp";
+const char * PALLET = "assets/Protopallettown.bmp";
+//const char * ROUTE1_PATH =  "assets/route1.txt";
 
 const char * tile_set_path[] =
                         {
-                            "Assets/Protopallettown.bmp",
-                            "Assets/Protopallettown.bmp"
+                            "assets/Protopallettown.bmp",
+                            "assets/Protopallettown.bmp"
                         };
 
 
 const char * area[]  =
-                        { "Assets/pallet.txt",
-                        "Assets/route1.txt"
+                        { "assets/pallet.txt",
+                        "assets/route1.txt"
 
                         };
 
