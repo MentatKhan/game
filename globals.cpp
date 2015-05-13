@@ -17,7 +17,6 @@ const char * tile_set_path[] =
 const char * area[]  =
                         { "assets/pallet.txt",
                         "assets/route1.txt"
-
                         };
 
 //Screen dimension constant
