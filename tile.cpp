@@ -9,13 +9,15 @@ level::level(int areaid , GameEngine* myengine)
     int * mapdata;
     int * lampmap;
 
+    //get level data
     level_in( areaid , mapdata, lampmap, levelx, levely);
 
+    //load pallet town tilest and store in level tileset var
     loadMedia( (char*)PALLET /*tile_set_path[ areaid ]*/ , tileSet, engine->get_screen() );
 
 
-	mainmap = tilesetup(levelx , levely, mapdata,lampmap );
-	spritemap = spritesetup( levelx, levely , mainmap);
+    //mainmap = tilesetup(levelx , levely, mapdata,lampmap );
+    spritemap = spritesetup( levelx, levely , mainmap);
 
 
 }
@@ -32,23 +34,9 @@ bool level::level_in( int areaid ,int * &floor, int * &lamp, int &x , int &y  )
     if(fin)//check if it opened
     {
         fin >> x >> y;//get x y of main level
-        printf("%d\n %d\n",x,y);
+        //printf("%d\n %d\n",x,y);
 
-
-        //variables to hold ids of adjcent areas, anchor points to main level and number of adjcent areas MAX = 4
-        int adjid[4];
-        SDL_Rect anchor[4][2];
-        int adj_x[4];
-        int adj_y[4];
-        int adj;
-
-
-        //get number of adjcent areas
-        fin >> adj;
-        printf("%d\n",area[adj]);
-                    fstream next[4];
-
-
+	/*
         //if there are
         if(adj)
         {
@@ -130,8 +118,8 @@ bool level::level_in( int areaid ,int * &floor, int * &lamp, int &x , int &y  )
 
 
         printf( "estimated level size x = %d, y = %d", x ,y );
-
-
+*/
+	//make floor and lamp pointers
         floor = new (nothrow)int[x*y];
         lamp = new (nothrow)int[x*y];
 
@@ -145,9 +133,7 @@ bool level::level_in( int areaid ,int * &floor, int * &lamp, int &x , int &y  )
             printf("Lamp did not dynamically allocate correctly\n");
         return false;
         }
-
-
-
+	
 
         //printf("x is %d, y is %d\n",x,y);
         for(int i = 0; i < x*y; i++)
@@ -159,9 +145,6 @@ bool level::level_in( int areaid ,int * &floor, int * &lamp, int &x , int &y  )
 
         }
 
-
-
-
         for(int i = 0; i < x*y; i++)
         {
                     //if(i%x == 0)
@@ -170,6 +153,34 @@ bool level::level_in( int areaid ,int * &floor, int * &lamp, int &x , int &y  )
            // printf ( "%d",lamp[i]);
 
         }
+	
+	mainmap = tilesetup(levelx , levely, floor ,lamp);
+
+	//get number of transportign blocks
+	int portals;
+	fin >> portals;
+
+        coord portalspot;
+
+	for( int i = 0; i < portals; i++)
+	  {
+	    //read where the portal spot will be
+	    fin >> portalspot.x >> portalspot.y;
+	    mainmap[portalspot.x][portalspot.y].portal = true;	    
+
+
+	    //get where the portal will go then place
+	    fin >> temp;
+	    mainmap[portalspot.x][portalspot.y].world = temp;
+
+	    //get x coord of where we end up
+	    fin >> temp;
+	    mainmap[portalspot.x][portalspot.y].out.x = temp;
+	    
+	    //get y coord of where we end up
+	    fin >> temp;
+	    mainmap[portalspot.x][portalspot.y].out.y = temp;
+	  }
 
         fin.close();
 
@@ -275,7 +286,7 @@ tile ** level::tilesetup( int x ,int y, int * mapdata, int * lampmap )
 			}
 			retmap[j][i].tile_type = mapdata[k];
 			retmap[j][i].occupied = false;
-
+			retmap[j][i].portal = false;
 			retmap[j][i].top_type = lampmap[k];
 		}
 

@@ -8,12 +8,17 @@ struct Sprite;
 
 struct tile
 {
-
-	int tile_type;
-	bool solid;
-	int top_type;
-	bool occupied;
-	dood * tenent;
+  
+  int tile_type;
+  bool solid;
+  int top_type;
+  bool occupied;
+  bool portal;
+  int world;
+  coord out;
+  int height;
+  dood * tenent;
+  
 };
 
 class level

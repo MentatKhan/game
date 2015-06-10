@@ -107,38 +107,41 @@ SDL_Rect dood::getpos()
 
 void dood::update( )
 {
-
-	if(busy)
-	switch(busy)
+  if(busy)
+    switch(busy)
+      {
+      case WALK:
+	walkframe();
+	break;
+      case RUN:
+	break;
+      }
+  else
+    {
+      if( engine->get_level()->get_map()[x][y].portal == true)
 	{
-	case WALK:
-		walkframe();
-		break;
-	case RUN:
-		break;
+	  engine -> transition = true;
 	}
-	else
+      if(keydir == DOOD_ACTION)
 	{
-		if(keydir == DOOD_ACTION)
-		{
-			printf("action/n");
-		}
-		if(keydir == DOOD_START)
-		{
-			printf("start/n");
-		}
-		if(keydir == face && !check_front() ) // new input matches current direction
-		{
-			walkcount = 0;
-			reserve_next();
-			busy = true;
-		}
-		else // new input is diffrent
-		{
-			//change direction
-			change_face();
-		}
+	  printf("Im at %d,%d\n",x,y);
 	}
+      if(keydir == DOOD_START)
+	{
+	  printf("start\n");
+	}
+      if(keydir == face && !check_front() ) // new input matches current direction
+	{
+	  walkcount = 0;
+	  reserve_next();
+	  busy = true;
+	}
+      else // new input is diffrent
+	{
+	  //change direction
+	  change_face();
+	}
+    }
 }
 
 bool dood::check_front()

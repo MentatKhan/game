@@ -9,6 +9,11 @@
 //Proprietary Libs
 #include "globals.h"
 //Level headers
+struct coord
+{
+  int x;
+  int y;
+};
 
 
 //due to dood data tile needs to be here.

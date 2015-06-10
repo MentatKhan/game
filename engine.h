@@ -21,7 +21,7 @@ public:
 	level * get_level();
 	list<Sprite*> * get_batch();
 	list<dood> * get_npcs();
-
+	bool transition;
 private:
 	//game data no one has access to shit
 	bool quit;

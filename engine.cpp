@@ -110,6 +110,20 @@ fstream fin;
 
 }*/
 
+void GameEngine::changeState()
+{
+  //fade to black
+
+  //get relevant info
+
+  //delete old level
+
+  //load new level
+
+  //place hero
+
+  
+}
 
 SDL_Rect* GameEngine::get_camera()
 {
@@ -150,9 +164,18 @@ void GameEngine::gameloop(SDL_Window * window)
 
 		gameinput();
 		gamelogic();
-		//changeState();
+
+		if(transition)
+		  {
+		    changeState();
+		  }
 		gamedisplay( window );
 
+
+		
+		//bufferflush
+		fflush(stdout);
+		
 		frameTicks = SDL_GetTicks() - timer;
 		if( frameTicks < SCREEN_TICKS_PER_FRAME)
 		{
