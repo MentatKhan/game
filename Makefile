@@ -1,10 +1,10 @@
 
 
-OBJS=dood.o doodad.o engine.o globals.o  tile.o main.o
+OBJS=dood.o doodad.o engine.o globals.o  tile.o main.o pugixml.o
 
 LFLAGS=
 
-CFLAGS= -std=c++11 -lSDL2
+CFLAGS= -std=c++11 -lSDL2 -lSDL2_image
 
 BFLAGS= -lSDL2
 

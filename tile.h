@@ -5,6 +5,10 @@ class dood;
 #include "includes.h"
 class GameEngine;
 struct Sprite;
+#include <iostream>
+#include <vector>
+
+#include "pugixml.hpp"
 
 struct tile
 {
@@ -34,6 +38,8 @@ public:
 	int n,e,s,w;
 
 protected:
+	vector<SDL_Surface*> tilesets;
+	
 	tile ** mainmap;
 	Sprite *** spritemap;
 	int levelx;
@@ -44,7 +50,7 @@ protected:
 	tile ** tilesetup( int x ,int y,  int * mapdata, int * lampdata );
 	Sprite *** spritesetup( int x ,int y, tile ** mainmap);
 	bool level_in(int areaid ,int * &floor, int * &lamp, int &x , int &y );
-
+	void LoadLevel( char* xmlfile);
 
 };
 

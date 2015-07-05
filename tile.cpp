@@ -1,5 +1,6 @@
 #include "tile.h"
 
+#include "pugixml.hpp"
 
 level::level(int areaid , GameEngine* myengine)
 {
@@ -15,10 +16,69 @@ level::level(int areaid , GameEngine* myengine)
     //load pallet town tilest and store in level tileset var
     loadMedia( (char*)PALLET /*tile_set_path[ areaid ]*/ , tileSet, engine->get_screen() );
 
-
+    LoadLevel( (char*)PALLET );
+    
     //mainmap = tilesetup(levelx , levely, mapdata,lampmap );
     spritemap = spritesetup( levelx, levely , mainmap);
 
+
+}
+
+void level::LoadLevel( char * xmlfile )
+{
+  //begining xmlreader implementation
+  /*
+  pugi::xml_document doc;
+  
+  pugi::xml_parse_result result = doc.load_file("assets/pallet.tmx");
+  
+  pugi::xml_node spider = doc.child("map");
+  std::cout << spider.attribute("height").value();
+  spider = spider.child("tileset");
+  std::cout << spider.attribute("name").value() << std::endl;
+  spider = spider.next_sibling("tileset");
+  std::cout << spider.attribute("name").value() << std::endl;
+  std::cout  << spider;
+  spider = spider.next_sibling("tileset");
+  std::cout << spider.attribute("name").value() << std::endl;
+  */
+  int height, width;
+  
+  //open file
+  pugi::xml_document doc;
+  
+  //pugi::xml_parse_result result = doc.load_file( xmlfile );
+  pugi::xml_parse_result result = doc.load_file("assets/pallet.tmx");
+  
+  //get width and hight
+  //and make layer maps
+
+  pugi::xml_node spider = doc.child("map");
+  
+  height = spider.attribute("height").as_int();
+  width  = spider.attribute( "width").as_int();
+  
+  std::cout << height << " " << width << std::endl;
+
+  //create tileset pointers
+  pugi::xml_node name;
+  for( spider = spider.child("tileset"); spider != 0; spider = spider.next_sibling("tileset") )
+    {
+      std::cout << spider << endl;
+      name = spider.child("image");
+      SDL_Surface * temp;
+      if( loadMedia( (char*)name.attribute("source").value() , temp , engine->get_screen()) )
+	tilesets.push_back(temp);
+      else
+	{
+	cout << "ERROR CREATING TILESET\n";
+	exit( 1 );
+	}
+    }
+  std::cout << "tilesets created\n";
+  //make tile rules
+  
+  //read in tile names
 
 }
 
