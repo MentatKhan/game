@@ -25,6 +25,13 @@ struct tile
   
 };
 
+struct tilesrc
+{
+  SDL_Surface* source;
+  int first;
+  
+};
+
 class level
 {
 public:
@@ -38,7 +45,11 @@ public:
 	int n,e,s,w;
 
 protected:
-	vector<SDL_Surface*> tilesets;
+	vector<tilesrc> tilesets;
+	Sprite ** bottom;
+	Sprite ** mid;
+	Sprite ** top;
+	Sprite ** misc;
 	
 	tile ** mainmap;
 	Sprite *** spritemap;
@@ -51,6 +62,7 @@ protected:
 	Sprite *** spritesetup( int x ,int y, tile ** mainmap);
 	bool level_in(int areaid ,int * &floor, int * &lamp, int &x , int &y );
 	void LoadLevel( char* xmlfile);
+	Sprite * layer_set (  pugi::xml_node node, int width, int height);
 
 };
 

@@ -59,27 +59,81 @@ void level::LoadLevel( char * xmlfile )
   width  = spider.attribute( "width").as_int();
   
   std::cout << height << " " << width << std::endl;
-
+  tilesrc temp;
   //create tileset pointers
   pugi::xml_node name;
   for( spider = spider.child("tileset"); spider != 0; spider = spider.next_sibling("tileset") )
     {
-      std::cout << spider << endl;
+      temp.first = spider.attribute("firstgid").as_int();
+      
+      std::cout << temp.first << std::endl;
       name = spider.child("image");
-      SDL_Surface * temp;
-      if( loadMedia( (char*)name.attribute("source").value() , temp , engine->get_screen()) )
-	tilesets.push_back(temp);
+      
+      if( loadMedia( (char*)name.attribute("source").value() , temp.source , engine->get_screen()) )
+	{
+	  tilesets.push_back(temp);
+	}
       else
 	{
 	cout << "ERROR CREATING TILESET\n";
 	exit( 1 );
 	}
     }
+  
   std::cout << "tilesets created\n";
   //make tile rules
   
-  //read in tile names
+  //read in tile layers
+  spider = spider.next_sibling("layer");
+  name = spider
+  bottom = layer_set( name, width, height ); 
 
+  spider = spider.next_sibling("layer");
+  name = spider;
+  mid = layer_set( name, width, height ); 
+
+  spider = spider.next_sibling("layer");
+  name = spider;
+  top = layer_set( name, width, height ); 
+
+}
+
+Sprite * level::layer_set( pugi::xml_node  node, int width, int height)
+{
+  node = node.child("data");
+  if(node != 1)
+    std::cout << "layerget\n";
+
+  Sprite * vcr = new(nothrow) Sprite*[width];
+
+
+  if(vcr == nullptr)
+    {
+      std::cout << "Level Layer dynamic allocation failed, way to fail dicknuts";
+      exit(0);
+    }
+
+  for(int i = 0; i < width ; i++ )
+    {
+      vcr[i] = new(nothrow) Sprite[height];
+
+      if(vcr[i] == nullptr)
+	{
+	  std::cout << "Level Layer dynamic allocation failed, way to fail dicknuts";
+	  exit(0);
+	}
+
+    }
+  node = node.child("tile");
+  for( int i = 0; i < width; i++)
+    for( int j = 0; j < height; j++)
+      {
+	vcr[i][j].tile_type = node.attribute("gid").as_int();
+	node = node.next_sibling("tile");
+	std::cout << vcr[i][j].tiletype;
+      }
+
+  return vcr;
 }
 
 bool level::level_in( int areaid ,int * &floor, int * &lamp, int &x , int &y  )
