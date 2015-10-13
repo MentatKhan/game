@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="24" height="25" tilewidth="16" tileheight="16" nextobjectid="1">
  <tileset firstgid="1" name="Ground" tilewidth="16" tileheight="16">
-  <image source="assets/palletground.bmp" width="224" height="16"/>
+  <image source="palletground.bmp" width="224" height="16"/>
  </tileset>
  <tileset firstgid="15" name="doodads" tilewidth="16" tileheight="16">
-  <image source="assets/doodads.bmp" trans="ffffff" width="252" height="16"/>
+  <image source="doodads.bmp" trans="ffffff" width="252" height="16"/>
   <tile id="2">
    <properties>
     <property name="colision" value="1"/>

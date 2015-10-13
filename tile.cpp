@@ -5,23 +5,107 @@
 level::level(int areaid , GameEngine* myengine)
 {
 
-	engine = myengine;
+  engine = myengine;
 
-    int * mapdata;
-    int * lampmap;
+  LoadLevel( (char*) PALLET );
+  /*Leagacy Code*/
+  // int * mapdata;
+  // int * lampmap;
+  
+  //   //get level data
+  // level_in( areaid , mapdata, lampmap, levelx, levely);
+  
+  // //load pallet town tilest and store in level tileset var
+  // loadMedia( (char*)PALLET /*tile_set_path[ areaid ]*/ , tileSet, engine->get_screen() );
+  
+  // LoadLevel( (char*)PALLET );
+  
+  // //mainmap = tilesetup(levelx , levely, mapdata,lampmap );
+  // spritemap = spritesetup( levelx, levely , mainmap);
+  
 
-    //get level data
-    level_in( areaid , mapdata, lampmap, levelx, levely);
+}
 
-    //load pallet town tilest and store in level tileset var
-    loadMedia( (char*)PALLET /*tile_set_path[ areaid ]*/ , tileSet, engine->get_screen() );
+/*
+Grabs the names and loads the tile sets for the level
+spider must be able to get to the "tileset" tags in one edge
+stores them in the level::tileset.vector
+*/
+void level::create_tilesets( pugi::xml_node spider )
+{
+  //temporary container for tileset image pointer
+  SDL_Surface* temp;
+  int first, Twidth ,id , last;
 
-    LoadLevel( (char*)PALLET );
-    
-    //mainmap = tilesetup(levelx , levely, mapdata,lampmap );
-    spritemap = spritesetup( levelx, levely , mainmap);
+  //holds path to source
+  char str[256];
+  pugi::xml_node name;
+  //traverses the Tileset tags in the TMX file
+  for( spider = spider.child("tileset"); spider != 0; spider = spider.next_sibling("tileset") )
+    {
+      //spider is in the <tileset> tag
+      //sets first so we can know which prototile we are setting for each tileset
+      first = spider.attribute("firstgid").as_int();
+      Twidth = spider.attribute("tilewidth").as_int();
+      //std::cout << "present tileset first Gid " << temp.first << std::endl;
+      name = spider.child("image");
 
+      //makes it so we can open the TMX files 
+      strcpy(str, "assets/");
+      strcat(str , (char*)name.attribute("source").value() );
+      
+      if( loadMedia( str  , temp , engine->get_screen()) )
+	{
+	  //add to vector of tilesets
+	  tilesets.push_back(temp);
+	  //tiles in this tileset
+	  last = name.attribute("width").as_int()/Twidth  ;
+	  prototile.resize ( prototile.size() +  last);
+	  std::cout <<"prototile is "<< prototile.size() << " tiles big.\n";
+	  //set up our prototiles with some basic attributes
+	  for(int i = first; i < prototile.size(); i++)
+	    {
+	      prototile[i] = tile_helper( temp, 16, i-first);
+	    }
+	  //name.attribute("width").as_int()/Twidth ;
+	  //runs through the tile properties and creates prototile vector
+	  for( name = name.next_sibling("tile"); name != 0; name = name.next_sibling("tile") );
+	    {//in tag <tile> if exists
+	      id = name.attribute("id").as_int();
+	      
+	      
+	      
+	      //std::cout << "tile id:" << id << " has colision attribute : " << name.child("properties").child_value("property") << std::endl;
+	      
+	      //prototile[first+id].solid = name.child("properties").child("property").attribute("value").as_int();
+	    }
+	       
+	}
+      else
+	{
+	  SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+				   "Tileset creation error",
+				   "Now you fucked up This was ment to happen\n go change teh false thing",
+				   NULL);
+	  exit( 1 );
+	}
+    }
 
+}
+
+tile level::tile_helper( SDL_Surface * mysurface, int tilesize , int tilenum)
+{
+  tile mytile;
+  mytile.solid;
+  mytile.occupied;
+  mytile.portal = false;
+  mytile.tenent = nullptr;
+  mytile.Tile_Sprite->src = mysurface;
+  SDL_Rect myrect = { ((tilenum-1) * tilesize) , 0 , tilesize , tilesize };
+  mytile.Tile_Sprite->srcloc = myrect;
+
+  return mytile;
+  
 }
 
 void level::LoadLevel( char * xmlfile )
@@ -46,65 +130,76 @@ void level::LoadLevel( char * xmlfile )
   
   //open file
   pugi::xml_document doc;
-  
+  pugi::xml_parse_result result;
   //pugi::xml_parse_result result = doc.load_file( xmlfile );
-  pugi::xml_parse_result result = doc.load_file("assets/pallet.tmx");
+  //TODO: assets pallet needs to be based on a lookup table
+
+  try
+    {
+      result = doc.load_file("assets/pallet.tmx");
+    }
+  catch( ... )
+    {
+      exit(1);
+    }
+
+  
+  if (result)
+    {
+      std::cout << "Load Result: " << result.description() << std::endl;
+    }
+  else
+    {
+      
+    }
   
   //get width and hight
   //and make layer maps
 
+  //sets spider on the map tag
   pugi::xml_node spider = doc.child("map");
-  
+
+  //grabs width and height from xml
   height = spider.attribute("height").as_int();
   width  = spider.attribute( "width").as_int();
   
-  std::cout << height << " " << width << std::endl;
-  tilesrc temp;
-  //create tileset pointers
-  pugi::xml_node name;
-  for( spider = spider.child("tileset"); spider != 0; spider = spider.next_sibling("tileset") )
-    {
-      temp.first = spider.attribute("firstgid").as_int();
-      
-      std::cout << temp.first << std::endl;
-      name = spider.child("image");
-      
-      if( loadMedia( (char*)name.attribute("source").value() , temp.source , engine->get_screen()) )
-	{
-	  tilesets.push_back(temp);
-	}
-      else
-	{
-	cout << "ERROR CREATING TILESET\n";
-	exit( 1 );
-	}
-    }
+  //std::cout << height << " " << width << std::endl;
+
+  
+  create_tilesets( spider );
   
   std::cout << "tilesets created\n";
   //make tile rules
+
+  pugi::xml_node datafinder;
   
   //read in tile layers
-  spider = spider.next_sibling("layer");
-  name = spider
-  bottom = layer_set( name, width, height ); 
+  spider = spider.child("layer");
+  //std::cout << "\nusing " << spider.attribute("name").value();
+  datafinder = spider;
+  bottom = layer_set( datafinder, width, height ); 
 
   spider = spider.next_sibling("layer");
-  name = spider;
-  mid = layer_set( name, width, height ); 
+  //std::cout << "\nusing " << spider.attribute("name").value();
+  datafinder = spider;
+  mid = layer_set( datafinder, width, height ); 
 
   spider = spider.next_sibling("layer");
-  name = spider;
-  top = layer_set( name, width, height ); 
-
+  //std::cout << "\nusing " << spider.attribute("name").value();
+  datafinder = spider;
+  top = layer_set( datafinder, width, height ); 
+  
 }
 
-Sprite * level::layer_set( pugi::xml_node  node, int width, int height)
+tile ** level::layer_set( pugi::xml_node  node, int width, int height)
 {
+  
   node = node.child("data");
+  /*
   if(node != 1)
     std::cout << "layerget\n";
-
-  Sprite * vcr = new(nothrow) Sprite*[width];
+  */
+  tile ** vcr = new(nothrow) tile*[width];
 
 
   if(vcr == nullptr)
@@ -115,7 +210,7 @@ Sprite * level::layer_set( pugi::xml_node  node, int width, int height)
 
   for(int i = 0; i < width ; i++ )
     {
-      vcr[i] = new(nothrow) Sprite[height];
+      vcr[i] = new(nothrow) tile[height];
 
       if(vcr[i] == nullptr)
 	{
@@ -130,10 +225,12 @@ Sprite * level::layer_set( pugi::xml_node  node, int width, int height)
       {
 	vcr[i][j].tile_type = node.attribute("gid").as_int();
 	node = node.next_sibling("tile");
-	std::cout << vcr[i][j].tiletype;
+	//std::cout << vcr[i][j].tile_type;
       }
+  //  std::cout << endl;
 
   return vcr;
+  
 }
 
 bool level::level_in( int areaid ,int * &floor, int * &lamp, int &x , int &y  )
@@ -270,32 +367,32 @@ bool level::level_in( int areaid ,int * &floor, int * &lamp, int &x , int &y  )
 	
 	mainmap = tilesetup(levelx , levely, floor ,lamp);
 
-	//get number of transportign blocks
-	int portals;
-	fin >> portals;
+	// //get number of transportign blocks
+	// int portals;
+	// fin >> portals;
 
-        coord portalspot;
+        // coord portalspot;
 
-	for( int i = 0; i < portals; i++)
-	  {
-	    //read where the portal spot will be
-	    fin >> portalspot.x >> portalspot.y;
-	    mainmap[portalspot.x][portalspot.y].portal = true;	    
+	// for( int i = 0; i < portals; i++)
+	//   {
+	//     //read where the portal spot will be
+	//     fin >> portalspot.x >> portalspot.y;
+	//     mainmap[portalspot.x][portalspot.y].portal = true;	    
 
 
-	    //get where the portal will go then place
-	    fin >> temp;
-	    mainmap[portalspot.x][portalspot.y].world = temp;
+	//     //get where the portal will go then place
+	//     fin >> temp;
+	//     mainmap[portalspot.x][portalspot.y].world = temp;
 
-	    //get x coord of where we end up
-	    fin >> temp;
-	    mainmap[portalspot.x][portalspot.y].out.x = temp;
+	//     //get x coord of where we end up
+	//     fin >> temp;
+	//     mainmap[portalspot.x][portalspot.y].out.x = temp;
 	    
-	    //get y coord of where we end up
-	    fin >> temp;
-	    mainmap[portalspot.x][portalspot.y].out.y = temp;
-	  }
-
+	//     //get y coord of where we end up
+	//     fin >> temp;
+	//     mainmap[portalspot.x][portalspot.y].out.y = temp;
+	//   }
+ 
         fin.close();
 
         return true;

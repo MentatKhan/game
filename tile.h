@@ -18,10 +18,11 @@ struct tile
   int top_type;
   bool occupied;
   bool portal;
-  int world;
+  //int world;
   coord out;
   int height;
   dood * tenent;
+  Sprite * Tile_Sprite;
   
 };
 
@@ -42,13 +43,14 @@ public:
 	tile ** get_map();
 	int get_x(){return levelx;};
 	int get_y(){return levely;};
-	int n,e,s,w;
+	//int n,e,s,w;
 
 protected:
-	vector<tilesrc> tilesets;
-	Sprite ** bottom;
-	Sprite ** mid;
-	Sprite ** top;
+	vector<SDL_Surface*> tilesets;
+	vector<tile> prototile;
+	tile ** bottom;
+	tile ** mid;
+	tile ** top;
 	Sprite ** misc;
 	
 	tile ** mainmap;
@@ -58,12 +60,14 @@ protected:
 	SDL_Surface * tileSet;
 	list<Sprite> tilemap;
 	GameEngine * engine;
+
+	void create_tilesets( pugi::xml_node spider);
 	tile ** tilesetup( int x ,int y,  int * mapdata, int * lampdata );
 	Sprite *** spritesetup( int x ,int y, tile ** mainmap);
 	bool level_in(int areaid ,int * &floor, int * &lamp, int &x , int &y );
 	void LoadLevel( char* xmlfile);
-	Sprite * layer_set (  pugi::xml_node node, int width, int height);
-
+	tile **layer_set (  pugi::xml_node node, int width, int height);
+	tile tile_helper(SDL_Surface * mysurface, int tilesize , int tilenum);
 };
 
 

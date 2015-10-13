@@ -9,10 +9,10 @@ CFLAGS= -std=c++11 -lSDL2 -lSDL2_image
 BFLAGS= -lSDL2
 
 alpha: $(OBJS)
-	g++ $(BFLAGS) -o $@ $(OBJS) 
+	g++ $(BFLAGS) -g -o $@ $(OBJS) 
 
 .cpp.o:
-	g++ $(CFLAGS) -c  $<
+	g++ $(CFLAGS) -g -c  $<
 
 clean:
 	rm -f *.o *~ alpha tmp.data

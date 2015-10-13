@@ -3,14 +3,15 @@
 
 struct Sprite
 {
-        bool draw;
-	SDL_Surface * src;
-	//May be able to delete
-	SDL_Rect  destloc;
-	//
-	SDL_Rect camloc;
-	SDL_Rect  srcloc;
-	int depth;
+  bool draw;
+  SDL_Surface * src;
+  //May be able to delete
+  SDL_Rect  destloc;
+  //
+  SDL_Rect camloc;
+  SDL_Rect  srcloc;
+  int depth;
+  int frames;
 };
 
 #endif // __SPRITE_H_

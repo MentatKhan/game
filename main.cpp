@@ -25,8 +25,9 @@ int main( int argc, char* argv[] )
 		else
 		{
 			GameEngine World_of_the_real;
+			SDL_Surface * screen = SDL_GetWindowSurface( window );
 			World_of_the_real.gameloop( window );
-
+			
 		}
 	}
 
